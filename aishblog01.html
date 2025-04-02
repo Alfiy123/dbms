@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timestamp Ordering</title>
+
+<style>
+
+body {
+    font-family:Nexa Serif;
+    background-color:#00CC99;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color:#FFFFE6;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    color:BROWN;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+section {
+    padding: 20px;
+    margin: 20px;
+    background-color: white;
+    border-radius: 8px;
+}
+h1{
+    color: #333;
+;
+}
+ h2 {
+    color: #333;
+}
+
+h3 {
+    color: #4CAF50;
+}
+
+textarea {
+    font-family: monospace;
+    font-size: 14px;
+}
+
+button {
+    background-color:#C0C0C0;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+}
+
+
+
+
+img{
+border-radius:8px;
+border:1px solid #ddd;
+padding:5px;
+width: 200px;
+float:right;
+}
+
+
+
+
+
+</style>
+</head>
+<body>
+    <header>
+        <h1> <marquee behaviour="alternate"> TIMESTAMP ORDERING</marquee></h1>
+        <nav>
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#Advantages">Advantages</a></li>
+                <li><a href="#Disadvantages">Disadvantages</a></li>
+                <li><a href="#Thomus Write Rule">Thomus write rule</a></li>
+               
+            </ul>
+        </nav>
+    </header>
+
+    <section id="introduction">
+        <h2>Introduction to Timestamp Ordering</h2>
+        <p>
+<img src="data:image/jpeg;base64,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">
+</img>            
+<section>
+<b>Introduction to Timestamp Ordering</b>
+
+Timestamp Ordering (TSO) is a concurrency control method used in database management systems (DBMS) to ensure the serializability of transactions. Serializability is a property that ensures the correctness of concurrent transactions, i.e., the result of executing multiple transactions concurrently is the same as if they were executed one after the other in some sequential order.
+
+In Timestamp Ordering, each transaction is assigned a unique timestamp when it starts. This timestamp serves as an ordering mechanism to control how transactions access shared data. The goal is to ensure that conflicting transactions are ordered in a way that respects the temporal sequence of their timestamps, thereby preventing anomalies such as lost updates, temporary inconsistency, and uncommitted data from being read by other transactions.
+
+
+
+
+<h2>Key Concepts of Timestamp Ordering:</h2>
+<b>Timestamps: </b>Every transaction is given a timestamp (often a system clock value or a logical sequence number) when it begins. These timestamps help determine the order in which transactions should be executed relative to each other.
+<br>
+<b>Read and Write Operations:</b>
+
+A read operation on a data item by a transaction is allowed only if no write operation on the same data item has been performed by a transaction with a later timestamp.
+
+A write operation on a data item by a transaction is allowed only if no earlier write has been performed by a transaction with a later timestamp.
+<br>
+<b>Transaction Conflict:</b> Two transactions conflict if they both access the same data item and at least one of them performs a write operation.<br>
+
+<b>Basic Rules:</b>
+<br>
+<b>Read Rule:</b> If a transaction 
+𝑇
+𝑖
+T 
+i
+​
+  attempts to read a data item that was previously written by a transaction 
+𝑇
+𝑗
+T 
+j
+​
+ , then 
+𝑇
+𝑖
+T 
+i
+​
+ 's timestamp must be greater than or equal to 
+𝑇
+𝑗
+T 
+j
+​
+ 's timestamp (i.e., 
+𝑇
+𝑖
+>
+𝑇
+𝑗
+T 
+i
+​
+ >T 
+j
+​
+ ).
+<br>
+
+<b>Write Rule:</b> If a transaction 
+𝑇
+𝑖
+T 
+i
+​
+  attempts to write a data item that was previously written by a transaction 
+𝑇
+𝑗
+T 
+j
+​
+ , then 
+𝑇
+𝑖
+T 
+i
+​
+ 's timestamp must be greater than 
+𝑇
+𝑗
+T 
+j
+​
+ 's timestamp (i.e., 
+𝑇
+𝑖
+>
+𝑇
+𝑗
+T 
+i
+​
+ >T 
+j
+​
+ ).
+<br>
+<b>Consistency Rule:</b> The system will reject transactions that violate these rules, ensuring that the final state of the database is serializable.
+
+<br><b>Cascading Abort: </b>If a transaction is aborted due to timestamp ordering rules (e.g., due to conflicting reads/writes), other dependent transactions may also need to be aborted or rolled back to maintain consistency.ss
+
+
+</p>
+
+
+
+    </section>
+<align="left">
+<section id="Advantages">
+   <h2>Advantages of Timestamp Protocol</h2>
+        <p>
+
+
+<p>
+>>Achieves serializability by prioritizing transactions according to their time stamps.</p>
+<p>
+>>Table 2 shows that it performs well in environments where concurrency is evident.</p>
+<p>
+>>It reduces deadlocks as it assigns the use of unique timestamps to each transaction.</p>
+
+
+        </p>
+
+
+
+
+        
+<section id="Disadvantages">
+   <h2>Disadvantages of Timestamp Protocol</h2>
+<p>
+<p>
+>>May result to avoidable rollbacks especially in case of consistent interferences.</p>
+<p>
+>>Difficult to apply in complex systems especially when used in similar applications.</p>
+           
+        </p>
+    </section>
+</align>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <section id="Thomus write Rule">
+<align="center">
+        <h2>Thomus write Rule</h2>
+        <p>
+    
+
+The Thomas Write Rule is basically another form of timestamp ordering which relaxes some of the write operations which do not affect the consistency of the database. This maximizes the price of transactions as compared to several rollbacks and thus improving on the existing systems.
+        </p>
+<p><ul>
+How it Works
+<li>When a transaction Ti issues a write on a data item Q, the system checks the timestamp:</li>
+<li>This means that TS(Ti)<R-TS(Q), implying the data was needed earlier, and the read operation fails, the system given returns an abort to Ti when doing a write operation.</li>
+<li>Per the relational attribute, if TS(Ti) < W-TS(Q) the system refrains from implementing the write since Ti is about to write an outdated value of Q.</li>
+<li>If none of the above conditions are suitable for the circumstance, the system writes and changes W-TS(Q) to TS(Ti).</li>
+<p>
+<b>Advantages of Thomas Write Rule</b>
+<ul>
+<li>It does not undo unnecessary work by ignoring writes that are made on a stale copy of the data.</li>
+<li>Enhances efficiency by reducing the effect of the write operation in concurrent transactions.</li>
+</p>
+
+<p>
+<b>Disadvantages of Thomas Write Rule</b>
+<ul>
+<li>May make it more difficult to execute the plans for the transaction management.</li>
+<li>It must be handled with care where timestamp assignment is concerned.</li>      
+ </p>
+</align>
+ </section>
+
+    
+</body>
+</html>
